@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
@@ -15,29 +14,35 @@ import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import io.github.narutopig.flappybird.wrapper.Entity
+import io.github.narutopig.flappybird.wrapper.Util
 import java.util.*
 
-
 class Main : ApplicationAdapter() {
+    // graphics stuff
     private lateinit var batch: SpriteBatch
     private lateinit var viewport: Viewport
     private lateinit var camera: OrthographicCamera
     private lateinit var pipeTexture: Texture
     private lateinit var font: BitmapFont
-    private val entities = mutableMapOf<UUID, Entity>()
+
+    // entities
     private lateinit var flappy: Entity
     private lateinit var pipe1pos: Vector2
     private lateinit var pipe2pos: Vector2
+    private val entities = mutableMapOf<UUID, Entity>()
+
+    // constants
     private val gap = 320
     private val pipeSpeed = Vector2(-8f, 0f)
     private val gravity = -4f
+
+    // game vars
     private var score = 0
     private var pipe1point = false
     private var pipe2point = false
     private var gameOver = false
-
-    var width: Int = 0
-    var height: Int = 0
+    private var width: Int = 0
+    private var height: Int = 0
 
     private fun add(entity: Entity) {
         entities[entity.uuid] = entity
@@ -153,11 +158,11 @@ class Main : ApplicationAdapter() {
         }
 
         val str = "Score: $score"
-        font.draw(batch, str, width / 2f - stringWidth(font, str) / 2, height - 16f)
+        font.draw(batch, str, width / 2f - Util.stringWidth(font, str) / 2, height - 16f)
 
         val go = "Game Over!"
         if (gameOver) {
-            font.draw(batch, go, width / 2f - stringWidth(font, go) / 2, height / 2f)
+            font.draw(batch, go, width / 2f - Util.stringWidth(font, go) / 2, height / 2f)
         }
 
         batch.end()
@@ -170,9 +175,5 @@ class Main : ApplicationAdapter() {
 
     private fun randHeight(): Float {
         return (Math.random() * height / 2 + height / 4).toFloat()
-    }
-
-    private fun stringWidth(font: BitmapFont, string: String): Float {
-        return GlyphLayout(font, string).width
     }
 }
