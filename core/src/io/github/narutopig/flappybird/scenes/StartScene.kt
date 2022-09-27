@@ -18,6 +18,7 @@ class StartScene(startFunc: () -> Unit) : ApplicationAdapter() {
     private lateinit var viewport: Viewport
     private lateinit var camera: OrthographicCamera
     private lateinit var font: BitmapFont
+    private lateinit var font2: BitmapFont
     private var startFunc: () -> Unit
     private var width: Int = 0
     private var height: Int = 0
@@ -29,6 +30,8 @@ class StartScene(startFunc: () -> Unit) : ApplicationAdapter() {
 
     override fun create() {
         font = BitmapFont(Gdx.files.internal("comicsans.fnt"), false)
+        font2 = BitmapFont(Gdx.files.internal("comicsans.fnt"), false)
+        font2.data.setScale(2f)
 
         // display
         Gdx.graphics.setWindowedMode(1280, 720)
@@ -64,7 +67,11 @@ class StartScene(startFunc: () -> Unit) : ApplicationAdapter() {
             font.data.setScale(1f)
             frames = 0
         }
+
         font.draw(batch, str, (width - Util.stringWidth(font, str)) / 2, height / 2f)
+
+        val str2 = "Flappy Bird"
+        font2.draw(batch, str2, (width - Util.stringWidth(font2, str2)) / 2, height * 0.8f)
 
         batch.end()
     }
