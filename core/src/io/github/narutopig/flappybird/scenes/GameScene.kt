@@ -132,14 +132,16 @@ class GameScene : ApplicationAdapter() {
         }
 
         val fbbox = flappy.boundingRectangle
-        val pipe1top = Rectangle(pipe1pos.x, pipe1pos.y + gapScaled() / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
+        val pipe1top =
+            Rectangle(pipe1pos.x, pipe1pos.y + gapScaled() / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
         val pipe1bottom = Rectangle(
             pipe1pos.x,
             pipe1pos.y - gapScaled() / 2 - pipeTexture.height,
             pipeTexture.width * 1.0f,
             pipeTexture.height * 1.0f
         )
-        val pipe2top = Rectangle(pipe2pos.x, pipe2pos.y + gapScaled() / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
+        val pipe2top =
+            Rectangle(pipe2pos.x, pipe2pos.y + gapScaled() / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
         val pipe2bottom = Rectangle(
             pipe2pos.x,
             pipe2pos.y - gapScaled() / 2 - pipeTexture.height,
