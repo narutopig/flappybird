@@ -190,6 +190,6 @@ class GameScene : ApplicationAdapter() {
     }
 
     private fun gapScaled(): Int {
-        return min((-2.4 * score + gap).toInt(), 160)
+        return max((-2.4 * score + gap).toInt(), 160)
     }
 }
