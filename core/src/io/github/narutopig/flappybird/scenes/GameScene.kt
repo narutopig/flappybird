@@ -16,6 +16,8 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import io.github.narutopig.flappybird.wrapper.Entity
 import io.github.narutopig.flappybird.wrapper.Util
 import java.util.*
+import kotlin.math.min
+import kotlin.math.sqrt
 
 class GameScene : ApplicationAdapter() {
     // graphics stuff
@@ -29,12 +31,13 @@ class GameScene : ApplicationAdapter() {
     private lateinit var flappy: Entity
     private lateinit var pipe1pos: Vector2
     private lateinit var pipe2pos: Vector2
+    private var pipe1speed = Vector2(-8f, 0f)
+    private var pipe2speed = Vector2(-8f, 0f)
     private val entities = mutableMapOf<UUID, Entity>()
 
     // constants
     private val gap = 320
-    private val pipeSpeed = Vector2(-8f, 0f)
-    private val gravity = -4f
+    private val gravity = -8f
 
     // game vars
     private var score = 0
@@ -62,7 +65,7 @@ class GameScene : ApplicationAdapter() {
         viewport = FitViewport(1280f, 720f, camera)
 
         pipeTexture = Texture("pipe.png")
-        flappy = Entity(Texture("flappy.png"))
+        flappy = Entity(Texture("dt.png"))
         flappy.keepInBounds = true
         flappy.setPositionCentered(48f, height / 2f)
         flappy.timers["jump"] = 0
@@ -78,12 +81,12 @@ class GameScene : ApplicationAdapter() {
         Gdx.graphics.setTitle("Flappy Bird | ${Gdx.graphics.framesPerSecond} FPS")
         // keyboard
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            flappy.speed.y = -gravity
-            flappy.timers["jump"] = 45
+            flappy.speed.y = -gravity * 0.8f
+            flappy.timers["jump"] = 30
         }
 
         if (flappy.timers["jump"] == 0) {
-            flappy.speed.y = gravity * 1.5f
+            flappy.speed.y = gravity
         }
 
         // drawing
@@ -100,8 +103,8 @@ class GameScene : ApplicationAdapter() {
                 e.value.update()
             }
 
-            pipe1pos = pipe1pos.add(pipeSpeed)
-            pipe2pos = pipe2pos.add(pipeSpeed)
+            pipe1pos = pipe1pos.add(pipe1speed)
+            pipe2pos = pipe2pos.add(pipe2speed)
         }
 
         if (pipe1pos.x <= flappy.righttedge() && !pipe1point) {
@@ -112,6 +115,7 @@ class GameScene : ApplicationAdapter() {
         if (pipe1pos.x + pipeTexture.width <= 0) {
             pipe1pos.x = width * 1.0f
             pipe1pos.y = randHeight()
+            pipe1speed = Vector2(-speedScaled(), 0f)
             pipe1point = false
         }
 
@@ -123,21 +127,22 @@ class GameScene : ApplicationAdapter() {
         if (pipe2pos.x + pipeTexture.width <= 0) {
             pipe2pos.x = width * 1.0f
             pipe2pos.y = randHeight()
+            pipe2speed = Vector2(-speedScaled(), 0f)
             pipe2point = false
         }
 
         val fbbox = flappy.boundingRectangle
-        val pipe1top = Rectangle(pipe1pos.x, pipe1pos.y + gap / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
+        val pipe1top = Rectangle(pipe1pos.x, pipe1pos.y + gapScaled() / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
         val pipe1bottom = Rectangle(
             pipe1pos.x,
-            pipe1pos.y - gap / 2 - pipeTexture.height,
+            pipe1pos.y - gapScaled() / 2 - pipeTexture.height,
             pipeTexture.width * 1.0f,
             pipeTexture.height * 1.0f
         )
-        val pipe2top = Rectangle(pipe2pos.x, pipe2pos.y + gap / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
+        val pipe2top = Rectangle(pipe2pos.x, pipe2pos.y + gapScaled() / 2, pipeTexture.width * 1.0f, pipeTexture.height * 1.0f)
         val pipe2bottom = Rectangle(
             pipe2pos.x,
-            pipe2pos.y - gap / 2 - pipeTexture.height,
+            pipe2pos.y - gapScaled() / 2 - pipeTexture.height,
             pipeTexture.width * 1.0f,
             pipeTexture.height * 1.0f
         )
@@ -145,10 +150,13 @@ class GameScene : ApplicationAdapter() {
         entities.forEach { e ->
             e.value.draw(batch)
         }
-        batch.draw(pipeTexture, pipe1pos.x, pipe1pos.y + gap / 2)
-        batch.draw(pipeTexture, pipe1pos.x, pipe1pos.y - gap / 2 - pipeTexture.height)
-        batch.draw(pipeTexture, pipe2pos.x, pipe2pos.y + gap / 2)
-        batch.draw(pipeTexture, pipe2pos.x, pipe2pos.y - gap / 2 - pipeTexture.height)
+
+        println(gapScaled())
+
+        batch.draw(pipeTexture, pipe1pos.x, pipe1pos.y + gapScaled() / 2)
+        batch.draw(pipeTexture, pipe1pos.x, pipe1pos.y - gapScaled() / 2 - pipeTexture.height)
+        batch.draw(pipeTexture, pipe2pos.x, pipe2pos.y + gapScaled() / 2)
+        batch.draw(pipeTexture, pipe2pos.x, pipe2pos.y - gapScaled() / 2 - pipeTexture.height)
 
         if (fbbox.overlaps(pipe1top) || fbbox.overlaps(pipe1bottom) || fbbox.overlaps(pipe2top) || fbbox.overlaps(
                 pipe2bottom
@@ -174,6 +182,14 @@ class GameScene : ApplicationAdapter() {
     }
 
     private fun randHeight(): Float {
-        return (Math.random() * height / 2 + height / 4).toFloat()
+        return ((height - gapScaled()) / 2 + Math.random() * gapScaled()).toFloat()
+    }
+
+    private fun speedScaled(): Float {
+        return (sqrt(score.toDouble()) + 8).toFloat()
+    }
+
+    private fun gapScaled(): Int {
+        return min((-2.4 * score + gap).toInt(), 160)
     }
 }
