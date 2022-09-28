@@ -65,7 +65,7 @@ class GameScene : ApplicationAdapter() {
         viewport = FitViewport(1280f, 720f, camera)
 
         pipeTexture = Texture("pipe.png")
-        flappy = Entity(Texture("dt.png"))
+        flappy = Entity(Texture("flappy.png"))
         flappy.keepInBounds = true
         flappy.setPositionCentered(48f, height / 2f)
         flappy.timers["jump"] = 0
