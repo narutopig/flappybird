@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import io.github.narutopig.flappybird.wrapper.Entity
 import io.github.narutopig.flappybird.wrapper.Util
 import java.util.*
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
